@@ -1,0 +1,61 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+
+
+group = 'sskier.pet'
+version = "$sskierDomainVersion"
+sourceCompatibility = JavaVersion.VERSION_17
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+task incrementVersion {
+    doLast {
+        String currentVersion = project.properties['sskierDomainVersion']
+        def versions = currentVersion.tokenize('.')
+        String m = versions[-1].toInteger() + 1
+        String newVersion = versions[0] + '.' + versions[1] + '.' + m
+
+        ant.propertyfile(file: "../gradle.properties") {
+            entry(key: "sskierDomainVersion", value: newVersion)
+        }
+
+        println "Change version for domain: " + currentVersion + " -> " + newVersion
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+publishing {
+
+    repositories {
+        mavenLocal()
+        /*maven {
+            name 'nexus'
+            allowInsecureProtocol = true
+            url "https://nexus-l.leantech.ai/repository/javateamz"
+            credentials {
+                username "javaz"
+                password "XR2hcSGewFWx"
+            }
+        }*/
+    }
+}
+
+dependencies {
+    api "jakarta.validation:jakarta.validation-api:$jakartaValidationApiVersion"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
+    api "org.projectlombok:lombok:$lombokVersion"
+    api "org.springdoc:springdoc-openapi-starter-webflux-ui:$springDocOpenApiStarterWebfluxVersion"
+    api "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
+    api "jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApiVersion"
+
+    implementation "jakarta.validation:jakarta.validation-api:$jakartaValidationApiVersion"
+
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+}
