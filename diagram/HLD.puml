@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/component-diagram
+left to right direction
+
+title "HLD - scheduling meetings"
+
+actor "CLIENT" as user
+actor "ADMIN" as admin
+
+node "GOOGLE MEET" AS googlePlatform #yellow
+() "Google Meet API" AS googleApi #yellow
+googleApi -- googlePlatform
+
+node "OUTER PERIMETER" #lightgreen{
+    frame "FRONTEND" AS front #darkkhaki {
+        [operation-client]
+        [scheduler-client]
+    }
+
+    node "Keycloak" AS k #pink
+
+    frame "Keycloak secured APIs" AS APIs #lightblue{
+      [scheduler-api]
+      [operation-api]
+      [integration-api] - googleApi
+    }
+
+    front <-down-> APIs
+    APIs <-> k
+    user <-down-> [scheduler-client]
+    admin <-down-> [operation-client]
+
+    node "INNER PERIMETER" as inner #lightyellow{
+        node "Kafka" as kafka #gold
+        database "Postgresql" as db #grey {
+        }
+
+        frame "INNER SERVICES" as services #FF9655 {
+            [persons]
+            [scheduler]
+            [events]
+        }
+
+        services <--> db
+        services <--> kafka
+    }
+
+    inner <-up-> APIs
+
+}
+
+
+
+
+@enduml

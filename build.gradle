@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.4'
-	id 'io.spring.dependency-management' version '1.1.7'
+	id 'pl.allegro.tech.build.axion-release' version '1.14.3'
+	id 'org.ajoberstar.grgit' version '4.1.1'
 }
 
 group = 'sskier.pet'
@@ -13,24 +13,14 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+subprojects {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+
+	dependencies {
+
 	}
 }
 
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-}
